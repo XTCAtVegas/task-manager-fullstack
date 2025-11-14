@@ -9,54 +9,41 @@ pipeline {
             }
         }
         
-        stage('Build Frontend') {
+        stage('Build and Test') {
             steps {
-                echo 'Building React Frontend...'
-                dir('taskmanager-app') {
-                    sh 'npm install'
-                    sh 'npm run build'
-                }
-            }
-        }
-        
-        stage('Build Backend') {
-            steps {
-                echo 'Building C# Backend...'
-                dir('TaskManagerAPI') {
-                    sh 'dotnet restore'
-                    sh 'dotnet build --configuration Release'
-                }
-            }
-        }
-        
-        stage('Test') {
-            steps {
-                echo 'Running tests...'
-                echo 'Tests passed! (Add real tests later)'
-            }
-        }
-        
-        stage('Docker Build') {
-            steps {
-                echo 'Building Docker images...'
+                echo 'Building Docker images (this includes building frontend and backend)...'
                 sh 'docker-compose build'
             }
         }
         
-        stage('Docker Push') {
+        stage('Verify Build') {
             steps {
-                echo 'Ready to push to Docker Hub (will configure later)'
-                echo 'Images built successfully!'
+                echo 'Verifying Docker images were created...'
+                sh 'docker images | grep parent'
+            }
+        }
+        
+        stage('Push to Registry') {
+            steps {
+                echo 'Ready to push to Docker Hub!'
+                echo 'Docker images built successfully ✅'
+                echo '(Will configure Docker Hub push in next step)'
             }
         }
     }
     
     post {
         success {
+            echo '=========================================='
             echo 'Pipeline completed successfully! ✅'
+            echo 'Docker images are ready for deployment!'
+            echo '=========================================='
         }
         failure {
+            echo '=========================================='
             echo 'Pipeline failed! ❌'
+            echo 'Check the logs above for errors'
+            echo '=========================================='
         }
     }
 }
