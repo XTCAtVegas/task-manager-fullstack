@@ -13,8 +13,8 @@ pipeline {
             steps {
                 echo 'Building React Frontend...'
                 dir('taskmanager-app') {
-                    bat 'npm install'
-                    bat 'npm run build'
+                    sh 'npm install'
+                    sh 'npm run build'
                 }
             }
         }
@@ -23,8 +23,8 @@ pipeline {
             steps {
                 echo 'Building C# Backend...'
                 dir('TaskManagerAPI') {
-                    bat 'dotnet restore'
-                    bat 'dotnet build --configuration Release'
+                    sh 'dotnet restore'
+                    sh 'dotnet build --configuration Release'
                 }
             }
         }
@@ -39,7 +39,7 @@ pipeline {
         stage('Docker Build') {
             steps {
                 echo 'Building Docker images...'
-                bat 'docker-compose build'
+                sh 'docker-compose build'
             }
         }
         
