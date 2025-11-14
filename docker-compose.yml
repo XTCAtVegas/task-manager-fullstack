@@ -1,0 +1,30 @@
+version: '3.8'
+
+services:
+  # Backend API
+  backend:
+    build:
+      context: ./TaskManagerAPI
+      dockerfile: Dockerfile
+    ports:
+      - "5000:5000"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+    networks:
+      - taskmanager-network
+
+  # Frontend
+  frontend:
+    build:
+      context: ./taskmanager-app
+      dockerfile: Dockerfile
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+    networks:
+      - taskmanager-network
+
+networks:
+  taskmanager-network:
+    driver: bridge
